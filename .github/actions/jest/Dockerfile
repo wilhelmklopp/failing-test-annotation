@@ -7,5 +7,5 @@ LABEL com.github.actions.color="green"
 
 LABEL maintainer="Wilhelm Klopp <wilhelmklopp@github.com>"
 
-COPY lib /lib
-ENTRYPOINT ["/lib/entrypoint.sh"]
+COPY lib /lib/action
+ENTRYPOINT ["/lib/action/entrypoint.sh"]
