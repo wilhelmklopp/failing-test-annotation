@@ -21,19 +21,18 @@ function escapeRegExp(string) {
   return string.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
 }
 
-// function generateAnnotations(testResults) {
-//   return testResults.map((result) => {
-//     return {
-//       path: result.testFilePath,
-//       start_line:
-//       end_line:
-//       annotation_level
-//       message:
-//       raw_details:
-
-//     }
-//   })
-// }
+function generateAnnotations(testResults) {
+  return testResults.map((testResult) => {
+    const { line } = getLineAndColumn(testResult.testFilePath, testResult)
+    return {
+      path: testResult.testFilePath,
+      start_line: line,
+      end_line: line,
+      annotation_level: "failure",
+      message: "hello"
+    }
+  })
+}
 
 function getLineAndColumn(testFilePath, testResults) {
   const failureMessages = testResults.testResults[0].failureMessages.join(' ')
@@ -64,7 +63,11 @@ class ActionsReporter {
 
 
   async onRunComplete(contexts, results) {
-    const [owner, repo] = process.env.GITHUB_REPOSITORY.split("/")
+    // each test suites: results.testResults
+    // each test: results.testResults[0].testResults
+
+    const filePath = results.testResults[0].testFilePath
+    console.log(getLineAndColumn(filePath, results.testResults[0]))
 
     let conclusion
     if (results.numFailedTests == 0) {
@@ -74,8 +77,9 @@ class ActionsReporter {
     }
 
 
+    let data;
     try {
-      const { data } = await request(`https://api.github.com/repos/${owner}/${repo}/check-runs`, {
+      ({ data } = await request(`https://api.github.com/repos/${owner}/${repo}/check-runs`, {
         method: 'POST',
         headers,
         body: {
@@ -87,20 +91,14 @@ class ActionsReporter {
           output: {
             title: "All is well!",
             summary: "There is not much to summarize",
+            annotations: generateAnnotations(results.testResults)
           }
         }
-      })
+      }))
     } catch (err) {
       console.log(err)
       console.log(err.data)
     }
-
-    console.log(data)
-    // each test suites: results.testResults
-    // each test: results.testResults[0].testResults
-
-    const filePath = results.testResults[0].testFilePath
-    console.log(getLineAndColumn(filePath, results.testResults[0]))
   }
 }
 
