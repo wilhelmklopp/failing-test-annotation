@@ -29,7 +29,7 @@ function generateAnnotations(testResults) {
       start_line: parseInt(line),
       end_line: parseInt(line),
       annotation_level: "failure",
-      message: "hello"
+      message: testResult.message
     }
   })
 }
