@@ -1,9 +1,9 @@
 workflow "Run jest" {
   on = "push"
-  resolves = ["./.github/actions/jest"]
+  resolves = ["Jest"]
 }
 
-action "./actions/jest" {
-  uses = "./actions/jest"
+action Jest" {
+  uses = "./.github/actions/jest"
   secrets = ["GITHUB_TOKEN"]
 }
