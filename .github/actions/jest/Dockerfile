@@ -8,4 +8,4 @@ LABEL com.github.actions.color="green"
 LABEL maintainer="Wilhelm Klopp <wilhelmklopp@github.com>"
 
 COPY lib /lib
-ENTRYPOINT ["/action/lib/entrypoint.sh"]
+ENTRYPOINT ["/lib/entrypoint.sh"]
