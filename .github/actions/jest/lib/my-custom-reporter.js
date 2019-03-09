@@ -1,17 +1,86 @@
-// my-custom-reporter.js
-class MyCustomReporter {
+const Octokit = require('@octokit/rest')
+
+const github = new Octokit({
+  auth: `token ${process.env.GITHUB_TOKEN}`
+})
+
+function escapeRegExp(string) {
+  return string.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+}
+
+// function generateAnnotations(testResults) {
+//   return testResults.map((result) => {
+//     return {
+//       path: result.testFilePath,
+//       start_line:
+//       end_line:
+//       annotation_level
+//       message:
+//       raw_details:
+
+//     }
+//   })
+// }
+
+function getLineAndColumn(testFilePath, testResults) {
+  const failureMessages = testResults.testResults[0].failureMessages.join(' ')
+  const pattern = new RegExp(`${escapeRegExp(testFilePath)}:\\w+:\\w+`)
+  const match = pattern.exec(failureMessages)
+  const substring = match[0]
+  const [line, column] = substring.replace(`${testFilePath}:`, '').split(":")
+
+  return {
+    line,
+    column,
+  }
+}
+
+
+class ActionsReporter {
   constructor(globalConfig, options) {
     this._globalConfig = globalConfig;
     this._options = options;
   }
 
-  onRunComplete(contexts, results) {
-    console.log('Custom reporter output:');
-    console.log('GlobalConfig: ', this._globalConfig);
-    console.log('Options: ', this._options);
-    console.log("contexts: ", contexts);
-    console.log("reults: ", results);
+  // Create
+  // onRunComplete update check run and include annotatons
+  // onRUnComplete create a check run and annotations
+
+
+  // location matching is gonna suck
+
+
+  async onRunComplete(contexts, results) {
+    const [owner, repo] = process.env.GITHUB_REPOSITORY.split("/")
+
+    let conclusion
+    if (results.numFailedTests == 0) {
+      conclusion = "success"
+    } else {
+      conclusion = "failure"
+    }
+
+
+    const result = await github.checks.create({
+      owner,
+      repo,
+      name: "jest",
+      head_sha: process.env.GITHUB_SHA,
+      status: "completed",
+      conclusion,
+      completed_at: new Date().toISOString(),
+      output: {
+        title: "All is well!",
+        summary: "There is not much to summarize",
+      }
+    })
+    console.log(result)
+    // each test suites: results.testResults
+    // each test: results.testResults[0].testResults
+
+    const filePath = results.testResults[0].testFilePath
+    console.log(getLineAndColumn(filePath, results.testResults[0]))
   }
 }
 
-module.exports = MyCustomReporter;
+module.exports = ActionsReporter;

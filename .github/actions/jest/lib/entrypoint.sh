@@ -2,6 +2,7 @@
 
 set -e
 
+npm install @octokit/rest
 npm install jest
 
 export PATH=${PATH}:node_modules/.bin/
