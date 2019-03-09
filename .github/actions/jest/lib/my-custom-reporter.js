@@ -74,7 +74,7 @@ class ActionsReporter {
     }
 
 
-    const { data } = await request(`https://api.github.com/repos/${owner}/${repo}/check-runs`, {
+    const result = await request(`https://api.github.com/repos/${owner}/${repo}/check-runs`, {
       method: 'POST',
       headers,
       body: {
@@ -89,7 +89,9 @@ class ActionsReporter {
         }
       }
     })
+    console.log(result)
     console.log(data)
+    console.log(data.data)
     // each test suites: results.testResults
     // each test: results.testResults[0].testResults
 
