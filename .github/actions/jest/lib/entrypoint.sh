@@ -4,4 +4,4 @@ set -e
 
 npm install jest
 
-jest --reporters="default" --reporters="<rootDir>/lib/my-custom-reporter.js"
+NODE_PATH=node_modules jest --reporters="default" --reporters="<rootDir>/lib/my-custom-reporter.js"
