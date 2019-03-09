@@ -3,7 +3,7 @@ workflow "Run jest" {
   resolves = ["Jest"]
 }
 
-action Jest" {
+action "Jest" {
   uses = "./.github/actions/jest"
   secrets = ["GITHUB_TOKEN"]
 }
