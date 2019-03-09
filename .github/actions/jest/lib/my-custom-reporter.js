@@ -1,8 +1,21 @@
-const Octokit = require('@octokit/rest')
+const request = require('./request')
 
-const github = new Octokit({
-  auth: `token ${process.env.GITHUB_TOKEN}`
-})
+const { GITHUB_SHA, GITHUB_EVENT_PATH, GITHUB_TOKEN, GITHUB_WORKSPACE } = process.env
+
+const event = require(GITHUB_EVENT_PATH)
+const { repository } = event
+const {
+  owner: { login: owner }
+} = repository
+const { name: repo } = repository
+
+const headers = {
+  'Content-Type': 'application/json',
+  Accept: 'application/vnd.github.antiope-preview+json',
+  Authorization: `Bearer ${GITHUB_TOKEN}`,
+  'User-Agent': 'jest-action'
+}
+
 
 function escapeRegExp(string) {
   return string.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
@@ -61,20 +74,22 @@ class ActionsReporter {
     }
 
 
-    const result = await github.checks.create({
-      owner,
-      repo,
-      name: "jest",
-      head_sha: process.env.GITHUB_SHA,
-      status: "completed",
-      conclusion,
-      completed_at: new Date().toISOString(),
-      output: {
-        title: "All is well!",
-        summary: "There is not much to summarize",
+    const { data } = await request(`https://api.github.com/repos/${owner}/${repo}/check-runs`, {
+      method: 'POST',
+      headers,
+      body: {
+        name: "jest",
+        head_sha: GITHUB_SHA.GITHUB_SHA,
+        status: "completed",
+        conclusion,
+        completed_at: new Date().toISOString(),
+        output: {
+          title: "All is well!",
+          summary: "There is not much to summarize",
+        }
       }
     })
-    console.log(result)
+    console.log(data)
     // each test suites: results.testResults
     // each test: results.testResults[0].testResults
 
