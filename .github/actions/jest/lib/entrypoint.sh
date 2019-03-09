@@ -4,4 +4,6 @@ set -e
 
 npm install jest
 
-NODE_PATH=node_modules jest --reporters="default" --reporters="<rootDir>/lib/my-custom-reporter.js"
+export PATH=${PATH}:node_modules/.bin/
+
+jest --reporters="default" --reporters="<rootDir>/lib/my-custom-reporter.js"
