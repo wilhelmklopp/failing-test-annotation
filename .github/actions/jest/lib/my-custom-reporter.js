@@ -80,7 +80,7 @@ class ActionsReporter {
         headers,
         body: {
           name: "jest",
-          head_sha: GITHUB_SHA.GITHUB_SHA,
+          head_sha: GITHUB_SHA,
           status: "completed",
           conclusion,
           completed_at: new Date().toISOString(),
