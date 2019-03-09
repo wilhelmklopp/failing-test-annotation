@@ -74,24 +74,28 @@ class ActionsReporter {
     }
 
 
-    const result = await request(`https://api.github.com/repos/${owner}/${repo}/check-runs`, {
-      method: 'POST',
-      headers,
-      body: {
-        name: "jest",
-        head_sha: GITHUB_SHA.GITHUB_SHA,
-        status: "completed",
-        conclusion,
-        completed_at: new Date().toISOString(),
-        output: {
-          title: "All is well!",
-          summary: "There is not much to summarize",
+    try {
+      const { data } = await request(`https://api.github.com/repos/${owner}/${repo}/check-runs`, {
+        method: 'POST',
+        headers,
+        body: {
+          name: "jest",
+          head_sha: GITHUB_SHA.GITHUB_SHA,
+          status: "completed",
+          conclusion,
+          completed_at: new Date().toISOString(),
+          output: {
+            title: "All is well!",
+            summary: "There is not much to summarize",
+          }
         }
-      }
-    })
-    console.log(result)
+      })
+    } catch (err) {
+      console.log(err)
+      console.log(err.data)
+    }
+
     console.log(data)
-    console.log(data.data)
     // each test suites: results.testResults
     // each test: results.testResults[0].testResults
 
