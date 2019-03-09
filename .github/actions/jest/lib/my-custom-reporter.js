@@ -26,8 +26,8 @@ function generateAnnotations(testResults) {
     const { line } = getLineAndColumn(testResult.testFilePath, testResult)
     return {
       path: testResult.testFilePath,
-      start_line: line,
-      end_line: line,
+      start_line: parseInt(line),
+      end_line: parseInt(line),
       annotation_level: "failure",
       message: "hello"
     }
