@@ -1,6 +1,6 @@
 workflow "Run jest" {
   on = "push"
-  resolves = ["./actions/jest"]
+  resolves = ["./.github/actions/jest"]
 }
 
 action "./actions/jest" {
