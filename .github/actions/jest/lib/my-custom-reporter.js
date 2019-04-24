@@ -25,7 +25,7 @@ function generateAnnotations(testResults) {
   return testResults.map((testResult) => {
     const { line } = getLineAndColumn(testResult.testFilePath, testResult)
     return {
-      path: testResult.testFilePath,
+      path: testResult.testFilePath.replace(GITHUB_WORKSPACE, ""),
       start_line: parseInt(line),
       end_line: parseInt(line),
       annotation_level: "failure",
