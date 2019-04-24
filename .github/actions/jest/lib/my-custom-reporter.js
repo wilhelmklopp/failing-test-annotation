@@ -24,6 +24,7 @@ function escapeRegExp(string) {
 function generateAnnotations(testResults) {
   return testResults.map((testResult) => {
     const { line } = getLineAndColumn(testResult.testFilePath, testResult)
+    console.log("test result", testResult)
     return {
       path: testResult.testFilePath,
       start_line: parseInt(line),
